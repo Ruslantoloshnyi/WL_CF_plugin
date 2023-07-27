@@ -66,27 +66,27 @@ function rt_cf7_send_data_and_reset_counter()
     if ($count) {
         $to = 'ruslantoloshnyi@gmail.com, toloshnyi@gmail.com';
         $subject = get_bloginfo('name');
-        $message = 'Кількість запитів: ' . $count;
+        $message = 'Кількість запитів з Contact form: ' . $count;
         wp_mail($to, $subject, $message);
 
-        // reset the counter
+        // reset counter
         $wpdb->query("UPDATE $table_name SET counter = 0");
     }
 }
 add_action('rt_cf7_daily_mail_cron', 'rt_cf7_send_data_and_reset_counter');
 
 // register cron when plugin is activated
-register_activation_hook(__FILE__, 'rt_cf7_activate_cron');
 function rt_cf7_activate_cron()
 {
     if (!wp_next_scheduled('rt_cf7_daily_mail_cron')) {
-        wp_schedule_event(strtotime('00:00:00'), 'daily', 'rt_cf7_daily_mail_cron');
+        wp_schedule_event(strtotime('23:59:00'), 'daily', 'rt_cf7_daily_mail_cron');
     }
 }
+register_activation_hook(__FILE__, 'rt_cf7_activate_cron');
 
 // remove cron when plugin is deactivated
-register_deactivation_hook(__FILE__, 'rt_cf7_deactivate_cron');
 function rt_cf7_deactivate_cron()
 {
     wp_clear_scheduled_hook('rt_cf7_daily_mail_cron');
 }
+register_deactivation_hook(__FILE__, 'rt_cf7_deactivate_cron');
